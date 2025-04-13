@@ -1,4 +1,3 @@
-# MY-DEVOPS-PROJECTS
 ## Project Steps:
 
 1. Create a Simple Flask Application
@@ -17,5 +16,5 @@
 
 4. Implement CI/CD with GitHub Actions
    - Create a workflow to:
-     * Build Docker image
-     * Push image to Docker Hub
+     - Build Docker image
+     - Push image to Docker Hub
