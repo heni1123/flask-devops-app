@@ -8,6 +8,8 @@ pipeline {
 
     stages {
         stage('Clone Repository') {
+
+
             steps {
                 git url: 'https://github.com/heni1123/flask-devops-app.git', branch: 'main'
             }
