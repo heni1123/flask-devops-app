@@ -5,6 +5,7 @@ pipeline {
         DOCKER_IMAGE = "heni1123/flask-devops-app"
         DOCKER_TAG = "latest"
         CONTAINER_NAME = "flask-devops-app"
+        APP_PORT = "5000"
     }
 
     stages {
@@ -19,7 +20,7 @@ pipeline {
             steps {
                 echo "Construction de l'image Docker..."
                 script {
-                    docker.build("${env.DOCKER_IMAGE}:${env.DOCKER_TAG}")
+                    docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
                 }
             }
         }
@@ -44,7 +45,10 @@ pipeline {
             steps {
                 echo "Lancement du container Docker..."
                 script {
-                    sh "docker run -d -p 5000:5000 --name ${CONTAINER_NAME} ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
+                    sh """
+                    docker run -d -p ${APP_PORT}:${APP_PORT} --name ${CONTAINER_NAME} ${DOCKER_IMAGE}:${DOCKER_TAG}
+                    """
+                    echo "✅ Application Flask lancée sur : http://localhost:${APP_PORT} (ou l'adresse IP de Jenkins)"
                 }
             }
         }
@@ -54,6 +58,11 @@ pipeline {
                 echo "Vérification que le container tourne..."
                 script {
                     sh "docker ps -f name=${CONTAINER_NAME}"
+                    sh """
+                    echo "⏳ Test de l'application Flask sur http://localhost:${APP_PORT}"
+                    sleep 5
+                    curl -f http://localhost:${APP_PORT} || (echo '❌ L’application ne répond pas !' && exit 1)
+                    """
                 }
             }
         }
@@ -61,7 +70,7 @@ pipeline {
 
     post {
         always {
-            echo "Pipeline terminée"
+            echo "🎯 Pipeline terminée"
         }
     }
 }
